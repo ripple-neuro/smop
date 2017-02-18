@@ -36,7 +36,7 @@ class Getitem(unittest.TestCase):
         self.assertTrue(isequal(a[  [1,1,1,1] , 1:4], matlabarray(z)))
         self.assertTrue(isequal(a[  [1,1,1,1],   : ], matlabarray(z)))
         #self.assertTrue(isequal(a[ [[1,1,1,1]], 1:4], matlabarray([z])))
-            
+
     def test06(self):
         a=copy(0)
         a[6]=666
