@@ -25,6 +25,7 @@ except:
 import unittest
 from scipy.special import gamma
 from numpy import rint as fix
+import time
 
 def isvector_or_scalar(a):
     """
@@ -450,16 +451,24 @@ def fopen(*args):
     except:
         return -1
 
+# MATLAB doesn't have fflush, so I'm not totally sure the point of this
+# on or I just don't understand what these functions are for.
 def fflush(fp):
     fp.flush()
 
-def fprintf(fp,fmt,*args):
-    if not isinstance(fp,file):
-        fp = stdout
-    fp.write(str(fmt) % args)
+def fprintf(fmt,*args):
+    stdout.write(str(fmt) % args)
 
 def fullfile(*args):
     return os.path.join(*args)
+
+def pause(t):
+    """
+    replace matlab's pause.
+
+    :param:: t - time to sleep in seconds.  From MATLAB it will be a double
+    """
+    time.sleep(t)
 
 # implemented in "scripts/set/intersect.m"
 #def intersect(a,b,nargout=1):

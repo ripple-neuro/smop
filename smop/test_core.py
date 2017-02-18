@@ -44,7 +44,7 @@ class Getitem(unittest.TestCase):
 
 class Expand(unittest.TestCase):
     """
-    Expand on index error  
+    Expand on index error
     """
     def setUp(self):
         self.a = matlabarray(zeros(1,4))
@@ -63,13 +63,13 @@ class Expand(unittest.TestCase):
 
     #@unittest.skip("")
     def test03(self):
-        a=zeros(1,4) 
+        a=zeros(1,4)
         a[1:10:4]=1
         "[[ 1.  0.  0.  0.  1.  0.  0.  0.  1.  0.]]"
 
     #@unittest.skip("")
     def test04(self):
-        a=zeros(1,4) 
+        a=zeros(1,4)
         with self.assertRaises(IndexError):
             a[5,5]=1
             b = matlabarray(
@@ -79,7 +79,7 @@ class Expand(unittest.TestCase):
                  [0,0,0,0,0],
                  [0,0,0,0,1]])
             self.assertTrue(isequal(a,b))
- 
+
 class Strread(unittest.TestCase):
     def test01(self):
         a = strread("0.11 0.22 0.33")
@@ -112,7 +112,6 @@ class Core(unittest.TestCase):
         self.assertTrue(isequal(zeros(2), zeros(2,2)))
         self.assertTrue(isequal(zeros(2,2), zeros(2,2)))
 
-        
 #class Copy(unittest.TestCase):
 #    def setUp(self):
 #        self.a = zeros(1,4)
