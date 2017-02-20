@@ -25,7 +25,6 @@ except:
 import unittest
 from scipy.special import gamma
 from numpy import rint as fix
-import time
 
 def isvector_or_scalar(a):
     """
@@ -328,7 +327,7 @@ class char(matlabarray):
             obj.shape = (0,0)
         return obj
 
-    def __getitem__(self,index): 
+    def __getitem__(self,index):
         return self.get(index)
 
     def __str__(self):
@@ -414,7 +413,7 @@ def exist(a,b):
 def false(*args):
     if not args:
         return False # or matlabarray(False) ???
-    if len(args) == 1: 
+    if len(args) == 1:
         args += args
     return np.zeros(args,dtype=bool,order="F")
 
@@ -451,24 +450,32 @@ def fopen(*args):
     except:
         return -1
 
-# MATLAB doesn't have fflush, so I'm not totally sure the point of this
-# on or I just don't understand what these functions are for.
 def fflush(fp):
     fp.flush()
 
-def fprintf(fmt,*args):
-    stdout.write(str(fmt) % args)
+def pause(t):
+    time.sleep(t)
+
+def fprintf(fp, *args):
+    """
+    Mimick the behavior of MATLAB's fprintf.
+    """
+    if isinstance(fp, file):
+        # in this case, fp is the file object and the string format is
+        # found in the first element of args.
+        fmt = args[0]
+        args = args[1:]
+    else:
+        # in this case, 'fp' is actual the fmt.  We'll make
+        # the fp just stdout.
+        fmt = fp
+        # now just set fp to stdout
+        fp = stdout
+
+    fp.write(str(fmt) % args)
 
 def fullfile(*args):
     return os.path.join(*args)
-
-def pause(t):
-    """
-    replace matlab's pause.
-
-    :param:: t - time to sleep in seconds.  From MATLAB it will be a double
-    """
-    time.sleep(t)
 
 # implemented in "scripts/set/intersect.m"
 #def intersect(a,b,nargout=1):
@@ -503,7 +510,6 @@ def isempty(a):
 def isequal(a,b):
     return np.array_equal(np.asanyarray(a),
                           np.asanyarray(b))
-                          
 def isfield(a,b):
     return str(b) in a.__dict__.keys()
 
