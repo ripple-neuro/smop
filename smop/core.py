@@ -219,8 +219,6 @@ class end(object):
 class cellarray(matlabarray):
     """
     Cell array corresponds to matlab ``{}``
-
-
     """
 
     def __new__(cls, a=[]):

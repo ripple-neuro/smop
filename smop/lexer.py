@@ -79,7 +79,7 @@ def new():
     t_PLUS        = r"\+"
     t_PLUSEQ      = r"\+="
     t_PLUSPLUS    = r"\+\+"
-    
+
     states = (("matrix","inclusive"),
               ("afterkeyword","exclusive"))
 
@@ -108,7 +108,7 @@ def new():
 
     def t_afterkeyword_error(t):
         t_error(t)
-    
+
     # A quote, immediately following any of: (1) an alphanumeric
     # charater, (2) right bracket, parenthesis or brace,
     # or (3) another TRANSPOSE, is a TRANSPOSE.  Otherwise, it starts a
@@ -277,7 +277,7 @@ def new():
         # In matrix state, consume whitespace separating two
         # terms and return a fake COMMA token.  This allows
         # parsing [1 2 3] as if it was [1,2,3].  Handle
-        # with care: [x + y] vs [x +y] 
+        # with care: [x + y] vs [x +y]
         #
         # A term T is
         # (a) a name or a number
@@ -288,12 +288,12 @@ def new():
         # (1) an alphanumeric charater \w
         # (2) single quote (in octave also double-quote)
         # (3) right parenthesis, bracket, or brace
-        # (4) a dot (after a number, such as 3. 
+        # (4) a dot (after a number, such as 3.
         #
         # The pattern for whitespace accounts for ellipsis as a
         # whitespace, and for the trailing junk.
         #
-        # Terms start with 
+        # Terms start with
         # (1) an alphanumeric character
         # (2) a single or double quote,
         # (3) left paren, bracket, or brace and finally
