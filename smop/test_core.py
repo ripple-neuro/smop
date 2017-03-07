@@ -112,6 +112,31 @@ class Core(unittest.TestCase):
         self.assertTrue(isequal(zeros(2), zeros(2,2)))
         self.assertTrue(isequal(zeros(2,2), zeros(2,2)))
 
+class Repmat(unittest.TestCase):
+    """
+    Tests around the thin wrapper of repmat to ensure they behave like matlab.
+    """
+    def test_basic(self):
+        """
+        Just through in a basic matrix.
+        """
+        a = numpy.array([1, 2])
+        b = repmat(a, 2)
+        self.assertEqual(b.shape, (2, 4))
+        for lhs, rhs in zip(b.flatten(), [1, 2, 1, 2, 1, 2, 1, 2, 1, 2]):
+            self.assertEqual(lhs, rhs)
+
+    def test_struct(self):
+        """
+        Does this actually work with structs?
+        """
+        s = struct('a', 1)
+        m = repmat(s, 2)
+        self.assertEqual(m.shape, (2, 2))
+        for mm in m.flatten():
+            print(mm)
+            self.assertTrue(isinstance(mm, struct))
+
 #class Copy(unittest.TestCase):
 #    def setUp(self):
 #        self.a = zeros(1,4)

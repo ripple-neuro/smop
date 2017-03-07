@@ -9,7 +9,9 @@ import numpy
 from numpy import sqrt,prod,exp,log,dot,multiply,inf
 from numpy.fft import fft2
 from numpy.linalg import inv
-from numpy.linalg import qr  as _qr 
+from numpy.linalg import qr  as _qr
+from numpy.matlib import repmat as _repmat
+
 try:
     from scipy.linalg import schur as _schur
 except ImportError:
@@ -116,6 +118,7 @@ class matlabarray(np.ndarray):
         return self.__getitem__(slice(i,j))
 
     def __getitem__(self,index):
+        print("here")
         return matlabarray(self.get(index))
 
     def get(self,index):
@@ -132,7 +135,7 @@ class matlabarray(np.ndarray):
         else:
             index = slice(i,j)
         self.__setitem__(index,value)
-        
+
     def sizeof(self,ix):
         if isinstance(ix,int):
             n = ix+1
@@ -144,7 +147,7 @@ class matlabarray(np.ndarray):
             assert 0,ix
         if not isinstance(n,int):
             raise IndexError
-        return n 
+        return n
 
     def __setitem__(self,index,value):
         #import pdb; pdb.set_trace()
@@ -198,7 +201,7 @@ class matlabarray(np.ndarray):
 
     def __str__(self):
         return str(np.asarray(self))
- 
+
     def __add__(self,other):
         return matlabarray(np.asarray(self)+np.asarray(other))
 
@@ -278,7 +281,7 @@ class cellstr(matlabarray):
         create a cell array where each cell contains
         a line.
         """
-        obj = np.array(["".join(s) for s in a], 
+        obj = np.array(["".join(s) for s in a],
                        dtype=object,
                        copy=False,
                        order="C",
@@ -290,7 +293,7 @@ class cellstr(matlabarray):
     def __str__(self):
         return "\n".join("".join(s) for s in self.reshape(-1))
 
-    def __getitem__(self,index): 
+    def __getitem__(self,index):
         return self.get(index)
 
 
@@ -739,6 +742,16 @@ def isreal(a):
 
 eps = np.finfo(float).eps
 #print(np.finfo(np.float32).eps)
+
+def repmat(*args):
+    """
+    should replace matlabs functionality for 'repmat'
+    """
+    # assert(len(args) > 1)
+    if len(args) == 2:
+        return _repmat(args[0], args[1], args[1])
+    else:
+        return _repmat(args[0], args[1], args[2])
 
 if __name__ == "__main__":
     import doctest
