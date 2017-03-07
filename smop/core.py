@@ -41,6 +41,7 @@ def isvector_or_scalar(a):
         return a.size and a.ndim-a.shape.count(1) <= 1
     except:
         return False
+
 def isvector(a):
     """
     one-dimensional arrays having shape [N],
@@ -55,6 +56,9 @@ def isvector(a):
 
 class matlabarray(np.ndarray):
     """
+    Allows arrays created in MATLAB to be be handled as numpy.ndarray's
+    Handles copying, leaving indices to be 1 indexed, etc.
+
     >>> matlabarray()
     matlabarray([], shape=(0, 0), dtype=float64)
     >>> matlabarray([arange(1,5), arange(1,5)])
@@ -62,7 +66,7 @@ class matlabarray(np.ndarray):
     >>> matlabarray(["hello","world"])
     matlabarray("helloworld")
     """
-
+    # why __new__ and not __init__?
     def __new__(cls,a=[],dtype=None):
         obj = np.array(a,
                        dtype=dtype,
@@ -73,17 +77,17 @@ class matlabarray(np.ndarray):
             obj.shape = (0,0)
         return obj
 
-    #def __array_finalize__(self,obj):
+    # def __array_finalize__(self,obj):
 
     def __copy__(self):
-        return np.ndarray.copy(self,order="F")
+        return np.ndarray.copy(self, order="F")
 
     def __iter__(self):
         """ must define iter or char won't work"""
         return np.asarray(self).__iter__()
 
-    def compute_indices(self,index):
-        if not isinstance(index,tuple):
+    def compute_indices(self, index):
+        if not isinstance(index, tuple):
            index = index,
         if len(index) != 1 and len(index) != self.ndim:
             raise IndexError
@@ -118,7 +122,6 @@ class matlabarray(np.ndarray):
         return self.__getitem__(slice(i,j))
 
     def __getitem__(self,index):
-        print("here")
         return matlabarray(self.get(index))
 
     def get(self,index):
@@ -745,11 +748,14 @@ def repmat(*args):
     """
     should replace matlabs functionality for 'repmat'
     """
-    # assert(len(args) > 1)
     if len(args) == 2:
-        return _repmat(args[0], args[1], args[1])
+        rt = matlabarray(_repmat(args[0], args[1], args[1]))
     else:
-        return _repmat(args[0], args[1], args[2])
+        rt = matlabarray(_repmat(args[0], args[1], args[2]))
+
+    if rt.shape[0] == 1:
+        return rt.flatten()
+    return rt
 
 if __name__ == "__main__":
     import doctest

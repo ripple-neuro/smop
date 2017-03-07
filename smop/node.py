@@ -1,6 +1,5 @@
 # SMOP compiler -- Simple Matlab/Octave to Python compiler
 # Copyright 2011-2013 Victor Leikehman
-
 from collections import namedtuple
 from recipes import recordtype
 import copy,sys,inspect
@@ -36,6 +35,9 @@ def postorder(u):
         yield u # returns only traversible objects
 
 def extend(cls):
+    """
+    Add the function to the specified class.
+    """
     return lambda f: (setattr(cls,f.__name__,f) or f)
 
 def exceptions(f):
@@ -65,9 +67,9 @@ class node(object):
             def __iter__(self):
                 other = object.__getattribute__(self,"other")
                 return iter(other)
-            #def __hash__(self):
-            #    other = object.__getattribute__(self,"other")
-            #    return id(other)
+            # def __hash__(self):
+            #     other = object.__getattribute__(self,"other")
+            #     return id(other)
             def __repr__(self):
                 other = object.__getattribute__(self,"other")
                 return repr(other)
@@ -84,20 +86,20 @@ class node(object):
 
 ######### LISTS
 
-class concat_list(node,list):
+class concat_list(node, list):
     pass
 
-class global_list(node,list):
+class global_list(node, list):
     """space-separated list of variables used in GLOBAL statement"""
     pass
 
-class expr_list(node,list):
+class expr_list(node, list):
     def __str__(self):
         return ",".join([str(t) for t in self])
     def __repr__(self):
         return "expr_list(%s)" % list.__repr__(self)
 
-class stmt_list(node,list):
+class stmt_list(node, list):
     def __str__(self):
         return "\n".join([str(t) for t in self])
     def __repr__(self):
@@ -156,7 +158,7 @@ class let(stmt,recordtype("let",
     which is handled by call_stmt."""
     def __str__(self):
         return "%s=%s" % (str(self.ret), str(self.args))
-    
+
 class func_stmt(stmt,recordtype("func_stmt",
                                 """
                                 ident
@@ -242,7 +244,7 @@ class allocate_stmt(stmt,recordtype("allocate_stmt",
 # FUNCALL
 
 class funcall(node,recordtype("funcall","func_expr args nargout",default=None)):
-    """Funcall instances represent 
+    """Funcall instances represent
     (a) Array references, both lhs and rhs
     (b) Function call expressions
     """
@@ -283,7 +285,7 @@ class builtins(funcall):
 
 class arrayref(funcall):
     def __repr__(self):
-        return "%s%s[%s]" % (self.__class__, 
+        return "%s%s[%s]" % (self.__class__,
                              self.func_expr,
                              self.args)
 

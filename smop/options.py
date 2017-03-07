@@ -65,15 +65,15 @@ input file names by replacing ".m" with
 
     $ smop filex.m filey.m filez.m
 
-generates files filex.py filey.py and filez.py""") 
+generates files filex.py filey.py and filez.py""")
 
 # parser.add_argument("-l", "--link",
 #                     metavar="file.py",
 # help="""Import file.py . File core.py is
 # always imported. For example,
-                    
+
 #    smop test_primes.m -l octave.py
-                    
+
 # Option -l can be specified several times.""")
 
 parser.add_argument("-s", "--strict",
@@ -123,7 +123,7 @@ compilation using the standard py_compile
 module. and (b) loading using the builtin
 evalfile function.  By default,
 broken py-files are kept alive to allow
-their examination and debugging. 
+their examination and debugging.
 
     $ smop -v --delete-on-error *.m
     $ rm -f libscripts.py

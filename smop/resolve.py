@@ -17,9 +17,7 @@ variable names (strings) to sets of ident
 instances, which possibly define the variable.
 It is used in if_stmt, for_stmt, and while_stmt.
 """
-
 import copy
-
 import node
 from node import extend
 import networkx as nx

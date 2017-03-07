@@ -39,12 +39,11 @@ precedence = (
     ("nonassoc", "LPAREN", "RPAREN", "RBRACE", "LBRACE"),
     ("left", "FIELD", "DOT", "PLUSPLUS", "MINUSMINUS"), )
 
-
 def p_top(p):
     """
     top :
         | top stmt
-      """
+    """
     if len(p) == 1:
         p[0] = node.stmt_list()
     else:
