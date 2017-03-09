@@ -79,6 +79,7 @@ def main():
             buf = buf.replace("\r\n", "\n")
             buf = buf.decode("ascii", errors="ignore")
             stmt_list = parse.parse(buf if buf[-1] == '\n' else buf + '\n')
+            print(stmt_list)
             #assert None not in stmt_list
             if not stmt_list:
                 continue
@@ -87,11 +88,16 @@ def main():
             if not options.no_backend:
                 s = backend.backend(stmt_list)
             if not options.output:
+                # if no output was asked for we just replace the suffix with .py
                 f = splitext(basename(options.filename))[0] + ".py"
                 with open(f, "w") as fp:
                     print_header(fp)
                     fp.write(s)
                 try:
+                    # try to build the resulting python file as a check.
+                    #
+                    # This sections seems silly, why only do this with output
+                    # isn't specified.
                     py_compile.compile(f,doraise=True)
                     if options.execfile:
                         execfile(f)

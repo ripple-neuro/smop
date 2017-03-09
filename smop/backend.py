@@ -13,7 +13,7 @@ return value:  return (x,y,z)[:nargout] or return x
 import logging
 logger = logging.getLogger(__name__)
 import node,options
-from node import extend,exceptions
+from node import extend, exceptions
 
 indent = " "*4
 
@@ -35,7 +35,13 @@ optable = {
     }
 
 def backend(t,*args,**kwargs):
-    return t._backend(level=1,*args,**kwargs)
+    """
+    Entry point for all the backend calls here.
+
+    This is called from main.py.
+    The level=1 seems to be what is messing up my unnamed scripts.
+    """
+    return t._backend(level=0,*args,**kwargs)
 
 
 # Sometimes user's variable names in the matlab code collide with Python
@@ -64,8 +70,7 @@ reserved = set(
     #acos  asin atan  cos e
     #exp   fabs floor log log10
     #pi    sin  sqrt  tan
-    
-
+
 @extend(node.add)
 def _backend(self,level=0):
     if (self.args[0].__class__ is node.number and
@@ -75,53 +80,53 @@ def _backend(self,level=0):
     else:
         return "(%s+%s)" % (self.args[0]._backend(),
                             self.args[1]._backend())
-
+
 @extend(node.arrayref)
 def _backend(self,level=0):
     fmt = "%s[%s]"
     return fmt % (self.func_expr._backend(),
                        self.args._backend())
-
+
 @extend(node.break_stmt)
 def _backend(self,level=0):
     return "break"
-
+
 @extend(node.builtins)
 def _backend(self,level=0):
     #if not self.ret:
         return "%s(%s)" % (self.__class__.__name__,
                            self.args._backend())
-
+
 @extend(node.cellarray)
 def _backend(self,level=0):
     return "cellarray([%s])" % self.args._backend()
-
+
 @extend(node.cellarrayref)
 def _backend(self,level=0):
     return "%s[%s]" % (self.func_expr._backend(),
                        self.args._backend())
-
+
 @extend(node.comment_stmt)
 def _backend(self,level=0):
-    s = self.value.strip() 
+    s = self.value.strip()
     if not s:
         return ""
     if s[0] in "%#":
         return s.replace("%","#")
     return self.value
-
+
 @extend(node.concat_list)
 def _backend(self,level=0):
     #import pdb; pdb.set_trace()
     return ",".join(["[%s]"%t._backend() for t in self])
-
+
 @extend(node.continue_stmt)
 def _backend(self,level=0):
     return "continue"
-
+
 @extend(node.expr)
 def _backend(self,level=0):
-    if self.op in ("!","~"): 
+    if self.op in ("!","~"):
        return "logical_not(%s)" % self.args[0]._backend()
 
     if self.op == "&":
@@ -155,7 +160,7 @@ def _backend(self,level=0):
                                  self.args[1]._backend())
     if self.op == ":":
         return "arange(%s)" % self.args._backend()
-    
+
     if self.op == "end":
 #        if self.args:
 #            return "%s.shape[%s]" % (self.args[0]._backend(),
@@ -196,15 +201,15 @@ def _backend(self,level=0):
     return ret+"%s(%s)" % (self.op,
                            ",".join([t._backend() for t in self.args]))
 
-
+
 @extend(node.expr_list)
 def _backend(self,level=0):
     return ",".join([t._backend() for t in self])
-
+
 @extend(node.expr_stmt)
 def _backend(self,level=0):
     return self.expr._backend()
-
+
 @extend(node.for_stmt)
 def _backend(self,level=0):
     fmt = "for %s in %s.reshape(-1):%s"
@@ -212,7 +217,6 @@ def _backend(self,level=0):
                   self.expr._backend(),
                   self.stmt_list._backend(level+1))
 
-
 @extend(node.func_stmt)
 def _backend(self,level=0):
     self.args.append(node.ident("*args"))
@@ -227,7 +231,7 @@ def %s(%s):
        self.ident._backend(),
        self.ident._backend())
     return s
-
+
 @extend(node.funcall)
 def _backend(self,level=0):
     #import pdb; pdb.set_trace()
@@ -242,20 +246,21 @@ def _backend(self,level=0):
                                       self.args._backend(),
                                       self.nargout)
 
-
+
 @extend(node.global_list)
 def _backend(self,level=0):
     return ",".join([t._backend() for t in self])
-
+
 @extend(node.ident)
 def _backend(self,level=0):
     if self.name in reserved:
+        # if a reserved word was used, prepend it with _
         self.name += "_"
     if self.init:
         return "%s=%s" % (self.name,
                           self.init._backend())
     return self.name
-
+
 @extend(node.if_stmt)
 def _backend(self,level=0):
     s = "if %s:%s" % (self.cond_expr._backend(),
@@ -267,14 +272,17 @@ def _backend(self,level=0):
         s += "\n"+indent*level
         s += "else:%s" % self.else_stmt._backend(level+1)
     return s
-
+
 @extend(node.lambda_expr)
 def _backend(self,level=0):
     return 'lambda %s: %s' % (self.args._backend(),
                               self.ret._backend())
-
+
 @extend(node.let)
 def _backend(self,level=0):
+    """
+    prints comment to show were this came from in the original MATLAB
+    """
     if not options.no_numbers:
         t = "\n# %s:%s" % (options.filename,
                              self.lineno)
@@ -300,17 +308,17 @@ def _backend(self,level=0):
         s += "%s=copy(%s)" % (self.ret._backend(),
                               self.args._backend())
     else:
-        s += "%s=%s" % (self.ret._backend(), 
+        s += "%s=%s" % (self.ret._backend(),
                        self.args._backend())
     return s+t
-
+
 @extend(node.logical)
 def _backend(self,level=0):
     if self.value == 0:
         return "false"
     else:
         return "true"
-
+
 @extend(node.matrix)
 def _backend(self,level=0):
     # TODO empty array has shape of 0 0 in matlab
@@ -323,11 +331,11 @@ def _backend(self,level=0):
     else:
         #import pdb; pdb.set_trace()
         return "cat(%s)" % self.args[0]._backend()
-
+
 @extend(node.null_stmt)
 def _backend(self,level=0):
     return ""
-
+
 @extend(node.number)
 def _backend(self,level=0):
     #if type(self.value) == int:
@@ -337,44 +345,45 @@ def _backend(self,level=0):
 @extend(node.pass_stmt)
 def _backend(self,level=0):
     return "pass"
-
+
 @extend(node.persistent_stmt) #FIXME
 @extend(node.global_stmt)
 def _backend(self,level=0):
     return "global %s" % self.global_list._backend()
-
+
 @extend(node.return_stmt)
 def _backend(self,level=0):
     if not self.ret:
-        return "return" 
+        return "return"
     else:
         return "return %s" % self.ret._backend()
 
-
 @extend(node.stmt_list)
 def _backend(self,level=0):
+    print(level)
     for t in self:
         if not isinstance(t,(node.null_stmt,
                              node.comment_stmt)):
             break
     else:
         self.append(node.pass_stmt())
+
     sep = "\n"+indent*level
     return sep+sep.join([t._backend(level) for t in self])
-
+
 @extend(node.string)
 def _backend(self,level=0):
     return "'%s'" % str(self.value).encode("string_escape")
-
+
 @extend(node.sub)
 def _backend(self,level=0):
     return "(%s-%s)" %  (self.args[0]._backend(),
                          self.args[1]._backend())
-
+
 @extend(node.transpose)
 def _backend(self,level=0):
     return "%s.T" % self.args[0]._backend()
-
+
 @extend(node.try_catch)
 def _backend(self,level=0):
     fmt = "try:%s\n%sfinally:%s"
@@ -382,10 +391,8 @@ def _backend(self,level=0):
                   indent*level,
                   self.finally_stmt._backend(level+1))
 
-
 @extend(node.while_stmt)
 def _backend(self,level=0):
     fmt = "while %s:\n%s\n"
     return fmt % (self.cond_expr._backend(),
                   self.stmt_list._backend(level+1))
-

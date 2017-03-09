@@ -29,7 +29,7 @@ Example:
     )
 
 parser.add_argument("-c", "--code")
-
+
 parser.add_argument("-a", "--archive",
                     metavar="archive.tar",
 help="""Read .m files from the archive.
@@ -66,7 +66,7 @@ input file names by replacing ".m" with
     $ smop filex.m filey.m filez.m
 
 generates files filex.py filey.py and filez.py""")
-
+
 # parser.add_argument("-l", "--link",
 #                     metavar="file.py",
 # help="""Import file.py . File core.py is
@@ -80,39 +80,39 @@ parser.add_argument("-s", "--strict",
                     action="store_true",
 help="""stop after first syntax error (by
 default compiles other .m files)""")
-
+
 parser.add_argument("-V", '--version',
                     action='version',
                     version=__version__)
-
+
 parser.add_argument("-v", "--verbose",
                     action="store_true")
-
+
 parser.add_argument("-x", "--exclude",
                     metavar="filex.m,filey.m,filez.m",
                     type=str,
 help="""comma-separated list of files to ignore""")
-
+
 parser.add_argument("-d", "--debug",
 help="""Colon-separated codes.
 M Main
 L Lex
 P Parse
 """)
-
+
 parser.add_argument("-L", "--debug-lexer",
                     action="store_true",
 help="enable built-in debugging tools-")
-
+
 parser.add_argument("-P", "--debug-parser",
                     action="store_true",
 help="enable built-in debugging tools")
-
+
 parser.add_argument("filelist", nargs="*",
                     metavar="file.m", type=str)
-
+
 #parser.add_argument("--graphviz", action="store_true")
-
+
 parser.add_argument("-D","--delete-on-error",
                     action="store_false",
 help="""Borrowed from gnu make option of
@@ -136,42 +136,42 @@ their examination and debugging.
     >>> primes(9)
 Oops, wrong results.
 """)
-
+
 parser.add_argument("-H","--no-header",
                     action="store_true",
 help="""use it if you plan to concatenate
 generated files.""")
-
+
 parser.add_argument("-C","--no-comments",
                     action="store_true",
 help="""discard multiline comments""")
-
+
 parser.add_argument("-N", "--no-numbers",
                     action="store_true",
 help="""discard line-numbering information""")
-
+
 parser.add_argument("-B","--no-backend",
                     action="store_true",
 help="omit code generation")
-
+
 parser.add_argument("-E","--execfile",
                     action="store_false",
 help="""UNSAFE pass the py-file to execfile""")
-
+
 parser.add_argument("-R","--no-resolve",
                     action="store_true",
 help="omit name resolution")
-
+
 #parser.add_argument("-S","--strings", default="C",
 #help="""C for Octave style, F for Matlab style""")
-
+
 parser.add_argument("-T","--testing-mode",
                     action="store_true",
 help= """support special "testing"
 percent-bang comments used to write
 Octave test suite.  When disabled,
 behaves like regular comments.""")
-
+
 # parser.add_argument("-E", "--ignore-errors",
 #                     type=int,
 #                     metavar="N",

@@ -7,7 +7,6 @@ import ply.lex as lex
 from ply.lex import TOKEN
 import options
 
-
 tokens = [
     "AND", "ANDAND", "ANDEQ", "BACKSLASH", "COLON", "COMMA", "DIV", "DIVEQ",
     "DOT", "DOTDIV", "DOTDIVEQ", "DOTEXP", "DOTMUL", "DOTMULEQ", "END_EXPR",
@@ -43,6 +42,10 @@ reserved = {
 tokens += list(reserved.values())
 
 def new():
+    """
+    Entry point for lexer.  Defines tokens as varialbes or functions of
+    same name.
+    """
     t_AND         = r"\&"
     t_ANDAND      = r"\&\&"
     t_ANDEQ       = r"\&="
@@ -84,14 +87,19 @@ def new():
               ("afterkeyword","exclusive"))
 
     states = (("matrix", "inclusive"), ("afterkeyword", "exclusive"))
-
+    # white space, a space or "... plus anything"
     ws = r"(\s|\.\.\..*\n|\\\n)"
     #ws  = r"(\s|(\#|(%[^!])).*\n|\.\.\..*\n|\\\n)"
+    # match one or more white spaces
     ws1 = ws + "+"
+    # match 0 or more white spaces
     ws0 = ws + "*"
+    # match string?
     ms = r"'([^']|(''))*'"
     os = r'"([^"\a\b\f\r\t\0\v\n\\]|(\\[abfn0vtr\"\n\\])|(""))*"'
+    # mos is any kind of matlab string, I think.
     mos = "(%s)|(%s)" % (os, ms)
+    # variable name
     id = r"[a-zA-Z_][a-zA-Z_0-9]*"
 
     def unescape(s):

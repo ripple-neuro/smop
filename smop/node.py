@@ -28,11 +28,31 @@ def encode(s):
     return "".join(c+"_" if c.isupper() or c=="_" else c.upper() for c in s)
 
 def postorder(u):
-    if isinstance(u,node):
+    """
+    Postorder traverse of where u is a node.
+
+    Will do all subnode before processing.
+    """
+    if isinstance(u, node):
+        # in practice, this seems to get called on all types of objects
+        # including 'int's, 'str's, NoneTypes's, and node's
+        # from resolve.py
         for v in u:
             for t in postorder(v):
                 yield t
         yield u # returns only traversible objects
+
+def preorder(u):
+    """
+    Barcikowski one liner preorder...
+
+    I think it works.
+    """
+    if isinstance(u, node):
+        yield u
+        for v in u:
+            for t in preorder(v):
+                preorder(t)
 
 def extend(cls):
     """
@@ -53,7 +73,13 @@ def exceptions(f):
     return wrapper
 
 class node(object):
+    """
+    Wrap any class to be a tree structure node.
+    """
     def become(self,other):
+        # I don't think that this is ever called.
+        assert(False)
+        # do not understand the point of this but it's a clever piece of code.
         class Wrapper(self.__class__):
             def __copy__(self):
                 other = object.__getattribute__(self,"other")
