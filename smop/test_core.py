@@ -137,6 +137,9 @@ class Repmat(unittest.TestCase):
             print(mm)
             self.assertTrue(isinstance(mm, struct))
 
+class FFT(unittest.TestCase):
+    pass
+
 #class Copy(unittest.TestCase):
 #    def setUp(self):
 #        self.a = zeros(1,4)

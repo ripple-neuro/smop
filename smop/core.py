@@ -7,7 +7,7 @@ import __builtin__
 
 import numpy
 from numpy import sqrt,prod,exp,log,dot,multiply,inf
-from numpy.fft import fft2
+from numpy.fft import fft
 from numpy.linalg import inv
 from numpy.linalg import qr  as _qr
 from numpy.matlib import repmat as _repmat
@@ -742,7 +742,7 @@ def isreal(a):
     return True
 
 eps = np.finfo(float).eps
-#print(np.finfo(np.float32).eps)
+# print(np.finfo(np.float32).eps)
 
 def repmat(*args):
     """
@@ -756,6 +756,21 @@ def repmat(*args):
     if rt.shape[0] == 1:
         return rt.flatten()
     return rt
+
+def fft(*args):
+    """
+    Wrap MATLAB fft with numpy's
+    """
+    if (len(args) == 1):
+        return fft(args[0])
+    try:
+        if len(args[1]) == 0:
+            # in case [] is specified (as MATLAB sees this as empty)
+            args[1] = None
+    except TypeError:
+        # in the case that a number was specified that has no len
+        pass
+    fft(*args)
 
 if __name__ == "__main__":
     import doctest
