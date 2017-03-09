@@ -7,7 +7,7 @@ import __builtin__
 
 import numpy
 from numpy import sqrt,prod,exp,log,dot,multiply,inf
-from numpy.fft import fft
+from numpy.fft import fft as _fft
 from numpy.linalg import inv
 from numpy.linalg import qr  as _qr
 from numpy.matlib import repmat as _repmat
@@ -762,15 +762,18 @@ def fft(*args):
     Wrap MATLAB fft with numpy's
     """
     if (len(args) == 1):
-        return fft(args[0])
+        return _fft(args[0])
+    tmp = list(args)
     try:
-        if len(args[1]) == 0:
+        if len(tmp[1]) == 0:
             # in case [] is specified (as MATLAB sees this as empty)
-            args[1] = None
+            tmp[1] = None
     except TypeError:
         # in the case that a number was specified that has no len
         pass
-    fft(*args)
+    # print(args)
+    args = tuple(tmp)
+    return _fft(*args)
 
 if __name__ == "__main__":
     import doctest

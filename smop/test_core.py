@@ -5,6 +5,7 @@
 import numpy as np
 import unittest
 from core import *
+import numpy.random
 
 class Getitem(unittest.TestCase):
     def setUp(self):
@@ -134,11 +135,21 @@ class Repmat(unittest.TestCase):
         m = repmat(s, 2)
         self.assertEqual(m.shape, (2, 2))
         for mm in m.flatten():
-            print(mm)
             self.assertTrue(isinstance(mm, struct))
 
 class FFT(unittest.TestCase):
-    pass
+    def test_basic(self):
+        import numpy.random
+        x = numpy.random.rand(100)
+        fft(x)
+
+    def test_w_n(self):
+        x = numpy.random.rand(100)
+        fft(x, 10)
+
+    def test_w_empty(self):
+        x = numpy.random.rand(100, 2)
+        fft(x, [], 1)
 
 #class Copy(unittest.TestCase):
 #    def setUp(self):
