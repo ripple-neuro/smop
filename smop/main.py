@@ -79,7 +79,7 @@ def main():
             buf = buf.replace("\r\n", "\n")
             buf = buf.decode("ascii", errors="ignore")
             stmt_list = parse.parse(buf if buf[-1] == '\n' else buf + '\n')
-            print(stmt_list)
+            # print(stmt_list)
             #assert None not in stmt_list
             if not stmt_list:
                 continue

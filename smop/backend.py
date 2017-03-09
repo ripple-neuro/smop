@@ -41,7 +41,7 @@ def backend(t,*args,**kwargs):
     This is called from main.py.
     The level=1 seems to be what is messing up my unnamed scripts.
     """
-    return t._backend(level=0,*args,**kwargs)
+    return t._backend(level=0, *args,**kwargs)
 
 
 # Sometimes user's variable names in the matlab code collide with Python
@@ -225,11 +225,12 @@ def _backend(self,level=0):
 @function
 def %s(%s):
     varargin = %s.varargin
-    nargin = %s.nargin
+    nargin = %s.nargin%s
 """ % (self.ident._backend(),
        self.args._backend(),
        self.ident._backend(),
-       self.ident._backend())
+       self.ident._backend(),
+       self.stmt_list._backend(level+1))
     return s
 
 @extend(node.funcall)

@@ -517,8 +517,8 @@ def p_for_stmt(p):
 
 @exceptions
 def p_func_stmt(p):
-    """func_stmt : FUNCTION ident lambda_args SEMI
-                 | FUNCTION ret EQ ident lambda_args SEMI
+    """func_stmt : FUNCTION ident lambda_args stmt_list
+                 | FUNCTION ret EQ ident lambda_args stmt_list
     """
     # stmt_list of func_stmt is set below
     # marked with XYZZY
@@ -532,13 +532,13 @@ def p_func_stmt(p):
             ident=p[2],
             ret=node.expr_list(),
             args=p[3],
-            stmt_list=node.stmt_list())
+            stmt_list=p[4])
         ret_expr = node.expr_list()
     elif len(p) == 7:
         assert isinstance(p[2], node.expr_list)
         assert isinstance(p[5], node.expr_list)
         p[0] = node.func_stmt(
-            ident=p[4], ret=p[2], args=p[5], stmt_list=node.stmt_list())
+            ident=p[4], ret=p[2], args=p[5], stmt_list=p[6])
         ret_expr = p[2]
     else:
         assert 0
