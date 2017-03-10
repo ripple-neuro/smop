@@ -2,6 +2,8 @@ import smop.core
 import xipppy
 import atexit
 
+# Putting open here is probably not the right approach but may be needed
+# for compatibility with MATLAB scripts.
 xipppy.open()
 
 atexit.register(xipppy.close)
@@ -53,7 +55,11 @@ def convert_struct_bits(s):
     return 0
 
 def stimseq(*args):
+   
     if type(args[0]) == smop.core.struct:
+        # Handle the case where a single struct is MATLAB is passed.  The send
+        # function will always treat these as an array, so we pack this in an 
+        # extra layer for now.
         _seq_list = [args[0]]
     else:
         _seq_list = args[0]
